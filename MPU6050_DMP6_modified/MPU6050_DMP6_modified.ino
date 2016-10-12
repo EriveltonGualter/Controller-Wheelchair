@@ -64,7 +64,7 @@ int right = 12;
 int btn_set_position = 53;
 
 int count = 0;
-float delay_inicial = 200;
+float delay_inicial = 0;//200;
 float ref[3], var[3];
 float angle = 10;
 
@@ -264,12 +264,19 @@ void loop() {
 //              var[1] = ((int)(var[1] / 10))*10;
 //              var[2] = ((int)(var[2] / 10))*10;
 
-              Serial.print( ((int)(var[0] / 10))*10 );
+              Serial.print(ypr[0] * 180/M_PI);
               Serial.print("\t");
-              Serial.print( ((int)(var[1] / 10))*10 );
+              Serial.print(ypr[1] * 180/M_PI);
               Serial.print("\t");
-              Serial.print( ((int)(var[2] / 10))*10 );
+              Serial.print(ypr[2] * 180/M_PI);
               Serial.println("\t");
+              
+//              Serial.print( ((int)(var[0] / 10))*10 );
+//              Serial.print("\t");
+//              Serial.print( ((int)(var[1] / 10))*10 );
+//              Serial.print("\t");
+//              Serial.print( ((int)(var[2] / 10))*10 );
+//              Serial.println("\t");
             }
             else {
               count = count + 1;

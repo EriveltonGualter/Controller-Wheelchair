@@ -58,7 +58,9 @@ float ypr[3];           // [yaw, pitch, roll]   yaw/pitch/roll container and gra
 // packet structure for InvenSense teapot demo
 uint8_t teapotPacket[14] = { '$', 0x02, 0,0, 0,0, 0,0, 0,0, 0x00, 0x00, '\r', '\n' };
 
-// VARIAVEIS DO SISTEMA - Erivelton
+// ================================================================
+// ===                        VARIABLES                         ===
+// ================================================================
 int left = 11;
 int right = 12;
 int btn_set_position = 53;
@@ -67,6 +69,12 @@ int count = 0;
 float delay_inicial = 0;//200;
 float ref[3], var[3];
 float angle = 10;
+
+float wheel_left_min = 0;
+float wheel_left_max = 255;
+float wheel_right_min = 0;
+float wheel_right_max = 255;
+
 
 
 // ================================================================
@@ -172,19 +180,21 @@ void loop() {
     // ================================================================
     // ---                         HEURISTICA                       ---
     // ================================================================
-      if (var[2] > angle) {
-        analogWrite(right, 255);
+      if (var[2] < angle && var[2] < -angle) {
+         analogWrite(right,wheel_right_max);
+         analogWrite(left, wheel_left_max);
       }
-      else {
-        analogWrite(right, 0);
+      if (var[2] > angle) {
+        analogWrite(right,wheel_right_max);
+        analogWrite(left, wheel_left_min);
       }
       if (var[2] < -angle) {
-        analogWrite(left, 255);
-      }
-      else {
-        analogWrite(left, 0);
+        analogWrite(left, wheel_left_max);
+        analogWrite(right,wheel_right_min);
       }
     }
+    // TODO
+    // - Add controller PID
 
     // reset interrupt flag and get INT_STATUS byte
     mpuInterrupt = false;
@@ -231,12 +241,9 @@ void loop() {
               var[1] = ((int)(var[1] / 10))*10;
               var[2] = ((int)(var[2] / 10))*10;
 
-              Serial.print(var[0]);
-              Serial.print("\t");
-              Serial.print(var[1]);
-              Serial.print("\t");
-              Serial.print(var[2]);
-              Serial.println("\t");
+              Serial.print(var[0]);              Serial.print("\t");
+              Serial.print(var[1]);              Serial.print("\t");
+              Serial.print(var[2]);              Serial.println("\t");
             }
             else {
               count = count + 1;
@@ -260,23 +267,9 @@ void loop() {
               var[1] = (ref[1]-ypr[1]) * 180/M_PI;
               var[2] = (ref[2]-ypr[2]) * 180/M_PI;
 
-//              var[0] = ((int)(var[0] / 10))*10;
-//              var[1] = ((int)(var[1] / 10))*10;
-//              var[2] = ((int)(var[2] / 10))*10;
-
-              Serial.print(ypr[0] * 180/M_PI);
-              Serial.print("\t");
-              Serial.print(ypr[1] * 180/M_PI);
-              Serial.print("\t");
-              Serial.print(ypr[2] * 180/M_PI);
-              Serial.println("\t");
-              
-//              Serial.print( ((int)(var[0] / 10))*10 );
-//              Serial.print("\t");
-//              Serial.print( ((int)(var[1] / 10))*10 );
-//              Serial.print("\t");
-//              Serial.print( ((int)(var[2] / 10))*10 );
-//              Serial.println("\t");
+              Serial.print(ypr[0] * 180/M_PI);              Serial.print("\t");
+              Serial.print(ypr[1] * 180/M_PI);              Serial.print("\t");
+              Serial.print(ypr[2] * 180/M_PI);              Serial.println("\t");
             }
             else {
               count = count + 1;
